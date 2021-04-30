@@ -1,48 +1,43 @@
 package com.company;
 
 import java.io.*;
+import java.security.Key;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.Comparator;
+
 
 
 public class SearchFileStory {
     public void func1(String fname) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(fname));
-        String string1;
+        List<String> list ;
+       String string1;
         String[] result;
+ //____________________________________________________________
         while ((string1 = br.readLine()) != null) {
-            string1 = string1.trim().replace("\\s+", " ").replace(".", " ").replace("?", " ").replace("!", " ");
-          result= string1.split(" ");
+            string1 = string1.replaceAll("[()?:!.,;{}]+", "").replaceAll("\\s+", " ").replaceAll("[1-9]", "").replaceAll("[\\n|\\u00A0]+", "");
+           result = string1.split(" ");
             for (int i = 0; i < result.length; i++)
-                result[0]=result[i];
-
-           // System.out.println(result);
-
-            HashMap<String, Integer> wordCount = new HashMap<>();
-            for(String word : (result)){
-                if(wordCount.containsKey(word)&&word.length()>1){
-                    wordCount.put(word, wordCount.get(word)+1);
-                }
-                else
-                    {
+                result[0] = result[i];
+            Map<String, Integer> wordCount = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+            list = Arrays.asList(result);
+            Collections.sort(list);
+            for (String word : (list)) {
+                if (wordCount.containsKey(word) && word.length() > 3) {
+                    wordCount.put(word, wordCount.get(word) + 1);
+                } else {
                     wordCount.put(word, 1);
                 }
             }
-            SortedSet sortedSet= new TreeSet();
-           //SortedSet<String> wordsInString;
-            //wordsInString= (SortedSet<String>) wordCount.keySet();
-            Set<String> wordsInString = wordCount.keySet();
-
-            for(String word1 : wordsInString
-                    ){
-                if(wordCount.get(word1)>1){
-                    System.out.println(word1.toLowerCase(Locale.ROOT)+":  "+wordCount.get(word1));
+            for (Map.Entry<String, Integer> word1 : wordCount.entrySet())
+                if (word1.getValue().intValue() > 1) {
+                    System.out.printf("слово: %s количество: %d \n", word1.getKey().toLowerCase(Locale.ROOT), word1.getValue());
                 }
-            }
-       }
+        }
     }
 }
 
